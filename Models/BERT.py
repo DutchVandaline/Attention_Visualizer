@@ -17,8 +17,10 @@ class BertClassifier(nn.Module):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(0.1)
         self.classifier = nn.Linear(config.hidden_size, num_classes)
-    
-    def forward(self, input_ids, attention_mask):
+
+    def forward(self, input_ids, attention_mask=None):
+        if attention_mask is None:
+            attention_mask = torch.ones_like(input_ids)
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
         cls_output = outputs.last_hidden_state[:, 0, :]
         cls_output = self.dropout(cls_output)
